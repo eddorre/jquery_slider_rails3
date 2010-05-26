@@ -1,0 +1,34 @@
+<h1>Stocks</h1>
+
+<div id="x_slider" style="font-size:62.5%; width:350px;"></div>
+
+<div>
+  <p>Showing all stocks between <span id="x_low_selected"><%= @price_range.first %></span> and <span id="x_high_selected"><%= @price_range.last %></span></p>
+</div>
+
+<ul id="x_stock_list">
+  <%= render @stocks %>
+</ul>
+
+<script type="text/javascript">
+  $(function() {
+    $("#x_slider").slider( { 
+      range: true,
+      step: 10,
+      max: <%= @price_range.last %>,
+      min: <%= @price_range.first %>,
+      values: [<%= @price_range.first %>, <%= @price_range.last %> ],
+      stop: function(event, ui) {
+        var prices = $('#x_slider').slider('option', 'values');
+        $('#x_low_selected').html(prices[0]);
+        $('#x_high_selected').html(prices[1]);
+        $.ajax({
+          type: "GET",
+          data: ({ low: prices[0], high: prices[1] }),
+          url: 'http://0.0.0.0:3000/stocks',
+          dataType: 'script'
+        });
+      }
+    });
+  });
+</script>
